@@ -449,3 +449,9 @@ spec:
     limits.cpu: "10"
     limits.memory: 10Gi
 
+
+
+
+	* Note: to create a template yaml file from creating a pod or any other object
+		- e.g.: kubectl run redis --image=redis --restart=Never --dry-run -o yaml > pod.yaml
+		- The above command will create a YAML file which we can edit and then create a pod by the command "kubectl apply -f pod.yaml"
