@@ -316,4 +316,58 @@ spec:
   				- e.g.: kubectl scale --replicas=6 replicaset myapp-replicaset
 
 
-** I'm on Deployments Video
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ Deployments ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+	- Deplolyment provides us with the capability to upgrade the underlying instances seamlessly using
+		- rolling updates
+		- undo changes
+		- pause changes
+		- resume changes
+
+	- Deployment Definition file(.yml)
+		-  the definition of Deployment is exactly as the definition of ReplicaSet, Except the "kind:" is going to be Deployment
+
+	* Note: The Deployment automatically creates ReplicaSet
+ 
+	* Example of defining Deployment using a YAML file
+
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: myapp-replicaset
+  labels:
+     app: myapp
+     type: front-end
+
+spec:
+  template:
+
+    metadata:
+      name: myapp-pod
+      labels:
+        app:myapp
+        type: front-end
+    spec:
+      containers:
+      - name: nginx-container
+        image: nginx
+
+  replicas: 3
+  selector:
+    metchLabels:
+      type: front-end 
+
+
+
+
+  	- To create the Deployment using the YAML file
+  		- kubectl create -f <file_name.yml>
+
+
+  	- To view the list of Deployments
+  		- kubectl get deployments
+
+
+	* Note: To see all the created objects
+		- kubectl get all
