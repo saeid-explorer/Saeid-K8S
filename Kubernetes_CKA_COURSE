@@ -371,3 +371,81 @@ spec:
 
 	* Note: To see all the created objects
 		- kubectl get all
+
+
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ Namespaces ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+	
+	- There are initially 3 Namespaces created inside Kubernetes
+		1) Default
+			- it's created automatically in Kubernetes when the Cluster is first set up
+			- by default we are in this namespace
+		2) kube-system
+			- Kubernetes creates a set of Pods and services for its interanl purpose such as networking, DNS, etc
+			- To isolate these Pods from the user and prevent from accidentally deleting or modifying these services, Kubernets creates them under this namespace created at cluster startup
+		3) kube-public
+			- This is where resources that should be made available to all users are created
+
+	* Note: you can create your own namespaces 
+	- Each of the namespaces has its own set of policies. For example you can set a certain quota of resources to each namespace
+	- The resources inside a namespace can refer to each other simply by their names
+
+	- for refering to the services inside another nameservice, we should append the name of the namespace to the name of the service
+		- {service/Pod_name}.{namespace}.svc.cluster.local
+		- cluster.local is the default domain name of the Kubernetes cluster
+		- SVC is the subdomain for service
+		- e.g.: mysql.connect("db-service.dev.svc.cluster.local")
+
+	- To list PODs in a specific namespace
+		- kubectl get pods --namespace={namespace_name}
+		- e.g.:  kubectl get pods --namespace=kube-system
+
+	- To create a POD using a YAML file in a specific namespace
+		- kubectl create -f {Pod-definition-file.yml} --namespace={namespace_name}
+		- e.g.:  kubectl create -f pod-definition.yml --namespace=dev
+		- you can also place "namespace:" directive in the YAML file under "metadata:" section to make sure your resources are always created inside a specifc namespace
+
+
+	- To create a namespace using a namespace definition(YAML) file
+		- kubectl create -f {namespace-file.yml}
+
+		* Example of a namespace .yml definition file
+
+apiVersion: v1
+kind: Namespace
+metadata:
+    name: dev
+
+
+
+	- Another way to create namespace
+		- kubectl create namespace {namespace_name}
+
+		
+	- To switch the namespace permanently
+		- kubectl config set-context $(kubectl config current-context) --namespace={namespace_name}
+		- e.g.:  kubectl config set-context $(kubectl config current-context) --namespace=dev
+
+	- To view PODs in all namespaces
+		- kubectl get pods --all namespaces
+
+	* Note: Contexts are used to manage multiple clusters in multiple environments from the same management system
+
+
+	* Example of creating a resource quota for a namespace
+
+
+apiVersion: v1
+kind: ResourceQuota
+metadata:
+    name: compute-quota
+    namespace: dev
+
+spec:
+  hard:
+    pods: "10"
+    requests.cpu: "4"
+    requests.memory: 5Gi
+    limits.cpu: "10"
+    limits.memory: 10Gi
+
