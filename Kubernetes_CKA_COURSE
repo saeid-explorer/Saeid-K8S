@@ -1,0 +1,319 @@
+============================================================================================ KUBERNETES CKA Course - UDEMY_ MUMSHAD ======================================================================================================
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ Cluster Architecture~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+	* Note: The purpose of Kubernetes is to host your applications in the form of containers in an automated fasion so that you can deploy as many instances of your application and easily enable communication between different services within your application.
+
+	- Types of Nodes and their components in Kubernetes
+		
+		- Master Nodes: Manage, Plan, Schedule, Monitor Nodes
+			
+			- Etcd Cluster
+				- Etcd is a database that stores information in a key-value format
+
+			- Kube-Scheduler
+				- A scheduler identifies the right node to place a container on based on the containers reousrce requirements, the worker nodes capacity or other constraints
+
+			- Controller Manager
+				- Node-Controller
+					- Takes care of nodes. Responsible for onboarding new nodes to the cluster handling situations where nodes become unavailable
+				- Replication-Controller
+					- Ensures that the disired number of containers are running at all times in your replication group 
+				
+			- Kube-api server
+				- It's the primary management component of kubernetes
+				- It's responsible for orchestrating all operations within the cluster
+				- It Exposes the Kubernetes API which is used for external users to perform management operations on the cluster 
+
+
+		- Worker Nodes: Host Application as Containers
+				
+			- Container Runtime Engine
+				- Softwares that can run containers
+				- Popular ones are Docker, Containerd, Rocket
+				- Container Runtime Engine must be installed on all the nodes in the cluster(including the Master nodes)
+
+			- Kubelet
+				- A kubelet is an agent that runs on each node in a cluster
+				- It listens for instructions from the kube-api server and deploys or destroys containers on the nodes as required
+				- Kube-api server priodically fetches status reports from the kubelet to monitor the state of nodes and containers on them
+
+			- kube-proxy
+				- Communication between worker nodes are enable by this on the worker node
+				- Ensures that the necessary rules are in place on the worker nodes to allow the containers running on them to reach each other 
+
+
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ ETCD ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+	- ETCD is a distributed reliable key-value store that is simple, secure & fast
+	- Installing
+		1) Download Binaries
+		2) Extract
+			- tar xzvf <filename.tar.gz>
+		3) Run ETCD Service
+			- ./etcd
+	- ETCD service listens on port 2379 by default
+	- The default client that comes with ETCD is ETCD control client(etcdctl)
+		- You can use it to store and retrieve key-value pairs
+			- e.g.:  ./etcdctl set key1 value1
+			- e.g.:  ./etcdctl get key1
+		- getting help
+			- ./etcdctl
+	- ETC includes the following data:
+		- Nodes
+		- PODs
+		- Configs
+		- Secrets
+		- Accounts
+		- Roles
+		- Bindings
+		- Others
+		- and Every Change on the cluster
+
+* Note: The practice test environments are deployed using the kubeadm tool 
+
+	- Setup ETCD when you deploy a cluster from scratch
+		- first you download the binaries of ETCD
+			- e.g.:
+				- wget -q --https-only "https://github.com/coreos/etcd/releases/download/v3.5.13/etcd-v3.5.13-linux-amd64.tar.gz"
+		* Note: --advertise-client-url: it's the address on which ETCD listens{Server_IP:2379}
+
+	- Setup ETC when you deoploy a cluster using kubeadm tool
+		- if you setup your cluster using kubeadm, then kubeadm deploys the ETCD server for you as a POD in the kube-system namespace
+		- kubectl get pods -n kube-system
+		- To list all keys stored on ETCD by Kubernetes:
+			- kubectl exec etcd-master -n kube-system etcdctl get / --prefix --keys-only
+
+	- ETCD stores data in a registry and under that there are various Kubernets constructs such as nodes, pods, replicasets, etc.
+
+	- ETCD in HA Environment
+		- in a multi-master Kubernetes Environment we should make sure the different ETCD services know about each other
+			- --initial-cluster option in etcd.service defines ETCDs on a cluster
+
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ Kube-API ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+	- kubectl command in fact reaches to kube-api server (e.g. kubectl get nodes )
+	- kubeapi first authenticates the request and validates it
+	- it then retrieves the data from ETCD Cluster and responds back with the requested information
+	- Actions as a result of a change request(e.g. creating a POD) in the cluster
+		- Authenticate User
+		- Validate Request
+		- Retrieve data
+		- Update ETCD
+		- Scheduler
+		- Kubelet
+
+	- viewing api-server(kube-api) - when you deploy cluster using kubeadm
+		- kubectl get pods -n kube-system 
+		OR
+		- cat /etc/kubernetes/manifests/kube-apiserver.yaml
+
+	- viewing api-server(kube-api) - in a non-kubeadm setup
+		- cat /etc/systemd/system/kube-apiserver.service
+		- ps -aux | grep kube-apiserver
+
+
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ Kube Controller Manager ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+	- a Controller is a process that continuously monitors the state of various components within the system
+	- Node Controller
+		- checks the status of the nodes every 5 seconds
+		- it waits for 40s before marking a node as unreachable
+		- After a node is marked unreachable, it gives it five minutes to come back up, if it doesn't, it removes the PODs assigned to that node
+	- Replication Controller
+		- is responsible for monitoring the status of replica sets and ensuring the desired number of PODs are available at all times within the set
+		- if a POD dies, it creates another one 
+	- There are various other controllers
+	- Installing kube-controller-manager
+		- download the binaries
+		- run it
+			- kube-controller-manager.service
+	- View kube-controller-manager - in a kubeadm setup
+		- kubectl get pods -n kube-system
+		- cat /etc/kubernetes/manifests/kube-controller-manager.yaml
+	- View kube-controller-manager - in a non-kubeadm setup
+		- cat /etc/systemd/system/kube-controller-manager.service
+		- ps -aux | grep kube-controller-manager
+
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ Kube-Scheduler ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+	- it decides on which Node the PODs to be placed
+	- it decides based on some criteria such as resource requirements of PODS
+	- here is the procedure of kube-scheduler
+		1) Filter Nodes
+			- ignore the nodes which don't satisfy the resource limits of the PODs
+		2) Rank Nodes
+			- it uses a priority function to assign a score to the nodes on a scale of 0 to 10
+	- Installing kube-scheduler
+		- Download the binaries
+		- Extract it
+		- Run it as a service
+			- kube-scheduler.service
+	- View kube-scheduler options - in a kubeadm setup
+		- cat /etc/kubernetes/manifests/kube-scheduler.yaml
+		- ps -aux | grep kube-scheduler
+
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ Kubelet ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+	- kubelet in the kubernetes worker node, registers the node with the kubernetes cluster
+	- it loads or unloads containers on the ship as instructed by the scheduler on the master
+	- send back reports on the regular intervals to the master
+	- Installing kubelet:
+		- download the binaries
+		- run it
+			- kubelet.service
+		* Note: kubeadm does not automatically deploy the kubelet
+	- you must always manually install the kubelet on your worker nodes 
+	- View kubelet options
+		- ps -aux | grep kubelet
+
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ Kube-proxy ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+	- it's a process that runs on each node in the kubernetes cluster
+	- its job is to look for new services and every time a new service is created, it creates the appropriate rules on each node to forward traffic to those services to the backend PODs
+	- One way it works is using IPTABLES rules
+	- Installing kube-proxy
+		- download the binaries
+		- extract it
+		- run it
+			- kube-proxy.service
+	- View kube-proxy - in kubeadm setup
+		- kubectl get pods -n kube-system
+		- kubectl get daemonset -n kube-system
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ PODs ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+	- The containers are encapsulated into a Kubernetes object known as POD
+	- A POD is a single instance of an application in the form of a Container
+	- A POD is the smallest object that you can create in Kubernetes
+	- To scale our Application, we don't create new containers to the existing PODs, we create new PODs
+	- deploying pods:
+		- e.g.: kubectl run nginx --image nginx
+	- Viewing the pods in our Kubernetes cluster
+		- kubectl get pods
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ PODs with YAML ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+	
+	* Example of a YAML file for creating pod(s)
+
+
+apiVersion: v1
+
+kind: Pod
+
+metadata:
+  name: myapp-pod
+  labels:
+    app: myapp
+
+spec:
+  containers:
+    - name: nginx-container
+      image: nginx
+
+    - name: backend-container
+      image: redis
+
+
+
+    - To create PODs using YAML file
+    	- kubectl create -f <file_name.yml>
+
+
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ Replication Controller ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+	- provides
+		- HA
+		- Load Balancing & Scaling
+	- Replica Set is the new recommended way to setup replication. Replication Controller was the old way to do that
+
+	* Example of defining replication controller using a YAML file (first metadata section relates to Replication Controller, the second metadata section under Template is related to POD definition)
+
+
+apiVersion: v1
+kind: ReplicationController
+metadata:
+  name: myapp-rc
+  labels:
+     app: myapp
+     type: front-end
+
+spec:
+  template:
+
+    metadata:
+      name: myapp-pod
+      labels:
+        app:myapp
+        type: front-end
+    spec:
+      containers:
+      - name: nginx-container
+        image: nginx
+
+  replicas: 3
+
+
+  	- To create the replication controller using the YAML file
+  		- kubectl create -f <file_name.yml>
+
+  	- To view the list of replication controllers
+  		- kubectl get replicationcontroller
+
+
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ ReplicaSet ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+	* Example of defining replication controller using a YAML file (Selector section in this file is required)
+
+
+apiVersion: apps/v1
+kind: ReplicaSet
+metadata:
+  name: myapp-replicaset
+  labels:
+     app: myapp
+     type: front-end
+
+spec:
+  template:
+
+    metadata:
+      name: myapp-pod
+      labels:
+        app:myapp
+        type: front-end
+    spec:
+      containers:
+      - name: nginx-container
+        image: nginx
+
+  replicas: 3
+  selector:
+    metchLabels:
+      type: front-end 
+
+
+  	- To create the replicaSet using the YAML file
+  		- kubectl create -f <file_name.yml>
+
+  	- To delete the replicaSet
+  		- kubectl delete replicaset <ReplicaSet_Name>
+
+  	- To view the list of replication controllers
+  		- kubectl get replicaset
+
+  	- Labels and Selectors
+  		- These are mechanisms used by replicaSet to know which PODs to monitor, so that it can bring up new PODs in case any of them failed
+
+  	- Scaling ReplicaSet
+  		- There are some ways
+  			1) update the number of "replicas: <#>" in .yml difinition file
+  			   Then use "kubectl replace -f <file_name.yml>" command to update the ReplicaSet
+
+  			2) Use "kubectl scale --replicas=<#> -f <file_name.yml>" to update the ReplicaSet
+
+  			3) Use "kubectl scale --replicas=<#> replicaset <ReplicaSet_Name>"
+  				- e.g.: kubectl scale --replicas=6 replicaset myapp-replicaset
+
+
+** I'm on Deployments Video
