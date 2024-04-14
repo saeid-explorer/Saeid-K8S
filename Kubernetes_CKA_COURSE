@@ -458,3 +458,49 @@ spec:
 
 
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ Services ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+- Kubernetes Services enable communication between various components within and outside of the application
+- Services help us connect applications together with other applications or users
+
+
+** Service Types
+	1) NodePort
+		- One of the use cases of Services is to listen to a port on the Node and forward requests on that port to a port on the POD running the application
+
+	2) ClusterIP
+		- The service creates a virtual IP inside the cluster to enable communication between different services such as a set of front-end services to a set of backend services
+
+	3) LoadBalancer
+		- it provides a load balancer for our application in supported cloud providers
+
+
+** Service - NodePort
+	- TargetPort: Pod's Port
+	- Port: Service's Port
+	- NodePort: Node's Port - can only be in a valid range which by default is 30000-32767
+	- If the port is not set manually, it would be set similar to TargetPort
+	- If the NodePort is not set manually, a random Port in the valid range would be automatically allocated
+	- selector section of the YAML file selects the PODs that will be used for NodePort service
+
+	* Example of defining a NodePort Service via YAML file
+
+apiVersion: v1
+kind: Service
+metadata:
+    name: myapp-service
+    label: 
+spec:
+    type: NodePort
+    ports:
+     - targetPort: 80
+       port: 80
+       nodePort: 30008
+    selector:
+	app: myapp
+	type: front-end
+
+	- To create the Service using YAML file
+		- kubectl create -f <service-difinition.yml>
+
+	- To get the list of Services
+		- kubectl get services
