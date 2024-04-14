@@ -488,7 +488,7 @@ apiVersion: v1
 kind: Service
 metadata:
     name: myapp-service
-    label: 
+    
 spec:
     type: NodePort
     ports:
@@ -504,3 +504,44 @@ spec:
 
 	- To get the list of Services
 		- kubectl get services
+
+
+
+** Service - Cluster IP
+	- A Kubernetes Service that can help us group different sets of PODs together and provide a single interface to access the PODs in a group
+	- The requests are forwarded to one of the PODs under the service randomly
+	- This enables us to easily and effectively deploy a microservices-based application on Kubernetes cluster
+	- Each Service gets an IP and Name assigned to it inside the cluster
+	- TargetPort in YAML file is the port where the application/POD is exposed
+	- Port in YAML file is where the service is exposed
+	- To link the service to a set of PODs we use Selector
+
+	* Example of defining a Cluster IP Service via YAML file
+
+
+apiVersion: v1
+kind: Service
+metadata:
+    name: back-end
+
+spec:
+    type: ClusterIP
+    ports:
+     - targetPort: 80
+       port: 80
+       nodePort: 30008
+    selector:
+	app: myapp
+	type: back-end
+
+
+	- To create the Service using YAML file
+		- kubectl create -f <service-difinition.yml>
+
+	- To get the list of Services
+		- kubectl get services
+
+
+
+* Note: to expose port of a Service:
+	- e.g.: kubectl expose pod redis --name=redis-service --port=6379 --target-port=6379
