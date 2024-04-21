@@ -563,3 +563,19 @@ spec:
 		- kubectl version
 		- kubectl get all --namespace kube-system
 		- kubectl get all --namespace default
+
+	* Important common error
+		- The connection to the server <Host IP>:6443 was refused - did you specify the right host or port?
+		- To solve this error, use the following commands sequentially:
+			- sudo -i
+			- swapoff -a
+			- exit
+			- strace -eopenat kubectl version
+			
+	* Installing CNI(Container Network Interface)
+		- You must deploy a Container Network Interface (CNI) based Pod network add-on so that your Pods can communicate with each other 
+		- Cluster DNS (CoreDNS) will not start up before a network is installed
+		- Calico is an open-source CNI
+			- Calico has network policy capability
+			- to install Calico, go to Calico github page -> getting started section
+
