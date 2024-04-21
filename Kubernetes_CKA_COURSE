@@ -545,3 +545,10 @@ spec:
 
 * Note: to expose port of a Service:
 	- e.g.: kubectl expose pod redis --name=redis-service --port=6379 --target-port=6379
+
+
+
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ Initialize Kubernetes Master Node with Kubeadm ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+ 
