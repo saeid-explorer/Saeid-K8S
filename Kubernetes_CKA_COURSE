@@ -551,4 +551,15 @@ spec:
 
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ Initialize Kubernetes Master Node with Kubeadm ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
- 
+ 	- In order to initialize a kubernetes cluster with Kubeadm
+		- kubeadm  init --pod-network-cidr <cidr>
+		- e.g.:
+			kubeadm init --pod-network-cidr 10.88.0.0/16
+
+	* Note: If you have already run the kubeadm initialization command and confronted an error, do the following to remove the configs before running the initialization again
+		- rm .kube/config
+
+	* validation commands
+		- kubectl version
+		- kubectl get all --namespace kube-system
+		- kubectl get all --namespace default
