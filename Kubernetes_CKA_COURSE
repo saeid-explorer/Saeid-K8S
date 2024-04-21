@@ -567,6 +567,9 @@ spec:
 	* Important common error
 		- The connection to the server <Host IP>:6443 was refused - did you specify the right host or port?
 		- To solve this error, use the following commands sequentially:
+			- sudo nano /etc/fstab
+				- Locate the line in the "/etc/fstab" file that specifies the swap partition
+				- Comment out this line
 			- sudo -i
 			- swapoff -a
 			- exit
