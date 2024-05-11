@@ -4,7 +4,7 @@
 
 	# sudo systemctl stop ufw && sudo systemctl disable ufw
 	# echo 'net.ipv4.ip_forward=1' | sudo tee -a /etc/sysctl.conf
-	# sudo sed -i '/ swap / s/^\(.*\)$/#\1/g' /etc/fstab && sudo 
+	# sudo sed -i '/ swap / s/^\(.*\)$/#\1/g' /etc/fstab && sudo swapoff -a
 
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ Cluster Architecture~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
@@ -587,4 +587,9 @@ spec:
 		- Calico is an open-source CNI
 			- Calico has network policy capability
 			- to install Calico, go to Calico github page -> getting started section
+
+
+
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ Scheduling ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
