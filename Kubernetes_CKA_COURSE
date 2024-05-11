@@ -6,6 +6,8 @@
 	# echo 'net.ipv4.ip_forward=1' | sudo tee -a /etc/sysctl.conf
 	# sudo sed -i '/ swap / s/^\(.*\)$/#\1/g' /etc/fstab && sudo swapoff -a
 	# export KUBECONFIG=/etc/kubernetes/admin.conf
+	- verify if kube api server is running:
+		# ps aux | grep kube-apiserver	
 
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ Cluster Architecture~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
