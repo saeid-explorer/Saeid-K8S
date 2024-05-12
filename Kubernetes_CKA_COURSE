@@ -596,3 +596,127 @@ spec:
 
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ Scheduling ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
+** Labels and Selectors
+   - Labels and selectors are used to group and select objects
+   - we can set labels to a pod on the "Labels:" section of Pod definition YAML file:
+	- e.g.:
+
+apiVersion: v1
+kind: Pod
+metadata:
+  name: simple-webapp
+  labels:
+      app: App1
+      function: Front-end
+
+spec:
+  containers:
+  - name: simple-webapp
+    image: simple-webapp
+    ports:
+      - containerPort: 8080
+
+   - to select the labels of the above Pod using a Selector:
+     # kubectl get pods --selector app=App1
+
+   * Annotations
+     - they are used to record other details for informatory purpose
+       - for example tool details like name, version, build information, etc, or contact details(phone number, email, etc.)
+
+   - To get objects with a specific label use "-l" along with label
+      - e.g.:
+        - kubectl get pods -l env=dev
+
+
+** Node Selectors
+   - To label a node use the following format:
+     # kubectl label nodes <node-name> <label-key>=<label-value>
+     - e.g.:
+       # kubectl label nodes node-1 size=large
+   - Then we can use the node label on "nodeSelector:" section of Pod definition YAML file(e.g.):
+
+apiVersion:
+Kind: Pod
+metadata:
+  name: myapp-pod
+spec:
+  containers:
+  - name: data-processor
+    image: data-processor
+
+  nodeSelector:
+    size: Large
+
+
+    - Limitation of Node Selector
+	- you can not provide advanced expressions like OR or NOT with Node Selectors
+
+	
+
+** Node Affinity
+   - The primary purpose of node affinity feature is to ensure that pods are hosted on particular nodes
+   - Node Affinity feature provides us with advanced capabilities to limit pod placement on specific nodes
+   - Here is an example of using Node Affinity on YAML file:
+
+apiVersion:
+Kind: Pod
+metadata:
+  name: myapp-pod
+spec:
+  containers:
+  - name: data-processor
+    image: data-processor
+
+affinity:
+ nodeAffinity:
+   requiredDuringSchedulingIgnoredDuringExecution:
+     nodeSelectorTerms:
+     - matchExpressions:
+       - key: size
+         operator: In
+         values:
+         - large
+	 - medium
+
+
+OR
+
+
+
+apiVersion:
+Kind: Pod
+metadata:
+  name: myapp-pod
+spec:
+  containers:
+  - name: data-processor
+    image: data-processor
+
+affinity:
+ nodeAffinity:
+   requiredDuringSchedulingIgnoredDuringExecution:
+     nodeSelectorTerms:
+     - matchExpressions:
+       - key: size
+         operator: Not  In
+         values:
+         - large
+	 - medium
+
+
+
+   * Node Affinity Types
+      - Available:
+	 - requiredDuringSchedulingIgnoreDuringExecution
+	   - DuringScheduling: the state where a pod does not exist and is created for the first time
+	   - DuringExecution: is the state where a POD has been running and a change is made in the environment that affects node affinity such as a change in the label of a node
+	   - required: the scheduler will mandate that the pod be placed on a node with a given affinity rules
+	      - if the scheduler cannot find one, the pod will not be scheduled
+	      - this type will be used in cases where the placement of the pod is crucial
+         - preferredDuringSchedulingIgnoredDuringExecution
+	   - preferred: in cases where a matching node is not found, the scheduler will simply ignore node affinity rules and place the Pod on any available node
+	       
+      - Planned:
+	 - requiredDuringSchedulingRequiredDuringExecution
+
+
