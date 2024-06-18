@@ -772,3 +772,38 @@ affinity:
       - Planned:
 	 - requiredDuringSchedulingRequiredDuringExecution
 
+
+
+** Resource Requirements and Limits
+	- By default Kubernets assumes that a Pod or a Container within a POD requires 0.5 CPU and 256MB of Memory
+	- You can change these default resource requirements by specifying them on POD or Deployment definition YAML file
+	- Example POD-definition.yaml file:
+		* Note: you can set resource limits on "limits" section of the file, as in the following example
+
+
+apiVersion: v1
+kind: Pod
+metadata:
+  name: simple-webapp-color
+  labels:
+    name: simple-webapp-color
+spec:
+  containers:
+  - name: simple-webapp-color
+    image: simple-webapp-color
+    ports:
+      - containerPort: 8080
+    resources:
+      requests:
+        memory: "1Gi"
+        cpu: "1"
+      limits:
+        memory: "2Gi"
+        cpu: "2"
+
+
+
+
+	- In order to get the Resource Requirements and Limits of a POD
+		# kubectl describe pod <pod_name>
+		- You can see your desired info on "Containers" section
