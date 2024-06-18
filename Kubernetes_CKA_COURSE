@@ -807,3 +807,51 @@ spec:
 	- In order to get the Resource Requirements and Limits of a POD
 		# kubectl describe pod <pod_name>
 		- You can see your desired info on "Containers" section
+
+
+** Daemon Sets
+    - It helps you deploy multiple instances of pods
+    - It runs one copy of your POD on each Node in your Cluster
+    - Whenever a new Node is added to the Cluster, a Replica of the POD is added to that Node
+    - The Daemon Set ensures that one copy of the POD is always present on all Nodes in the Cluster 
+
+    - Use Cases of Daemon Sets
+	- Deploying a Monitoring Agent or Log Collector on each of your Nodes in the Cluster
+	- The Kube-proxy component can be deployed as a Daemon Set in the Cluster
+	- Used for deploying Networking modules like Weave-net or Calico on all the Nodes
+
+    - DaemonSet Definition
+	- an example of creating a DaemonSet using a yaml definition file(with "kubectl create -f <definition-file-name>.yaml"):
+
+
+
+apiVersion: apps/v1
+kind: DaemonSet
+metadata:
+  name: monitoring-daemon
+spec:
+  selector:
+    matchLabels:
+      app: monitoring-agent
+  template:
+    metadata:
+      labels:
+        app: monitoring-agent
+    spec:
+      containers:
+      - name: monitoring-agent
+	image: monitoring-agent
+
+
+
+
+
+    - In order to view the created DaeomonSet:
+	# kubectl get daemonsets
+    - To view more details of a DaemonSet:
+	# kubectl describe daemonsets <daemonSet-name>
+
+
+
+
+** Static PODs
