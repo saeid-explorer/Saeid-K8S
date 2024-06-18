@@ -628,6 +628,59 @@ spec:
         - kubectl get pods -l env=dev
 
 
+
+
+** Taints and Tolerations
+   - Taints and Tolerations are used to set restrictions on what pods can be scheduled on a node
+   - Taints are set on Nodes and Tolerations are set on Pods
+   - by default pods have no tolerations which means unless specified otherwise, none of the pods can tolerate any taint
+   - we add a toleration on a pod to be able to be placed on a node with a specific taint
+
+   - In order to Taint a node:
+	# kubectl taint nodes <node_name> key=value:taint-effect
+		- taint-effect on the above format defines what would happen to the PODs if they don't tolerate the taint
+	- e.g.:
+		# kubectl taint nodes node1 app=blue:NoSchedule
+
+   - In order to add Toleration to a POD
+	- use the following yaml file format as an example:
+
+apiVersion:
+kind: Pod
+metadata:
+ name: myapp-pod
+spec:
+  containers:
+  - name: nginx-container
+    image: nginx
+
+  tolerations:
+  - key: "app"
+    operator: "Equal"
+    value: "blue"
+    effect: "NoSchedule"
+
+
+
+
+   - Taint-effect Types:
+	1) NoSchedule
+		- The PODs will not be scheduled on the Tainted Node
+	2) PreferNoSchedule
+		- The system will try to avoid placing a POD on the Tainted Node but that is not guaranteed
+	3) NoExecute
+		- New Pods will not be scheduled on the node and existing PODs on the Node(if any) will be evicted if they do not tolerate the Taint
+
+
+   - In order to view the taints on Nodes
+	# kubectl describe node <node_name> | grep Taint
+	- e.g.:
+	# kubectl describe node worker1 | grep Taint
+
+
+
+
+
 ** Node Selectors
    - To label a node use the following format:
      # kubectl label nodes <node-name> <label-key>=<label-value>
@@ -718,5 +771,4 @@ affinity:
 	       
       - Planned:
 	 - requiredDuringSchedulingRequiredDuringExecution
-
 
