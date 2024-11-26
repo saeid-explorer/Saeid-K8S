@@ -865,3 +865,24 @@ spec:
 		- kubectl top podes
 
 
+** Application Lifecycle Management
+	- To see the status of the deployment rollout:
+		-e.g.: kubectl rollout status deployment/myapp-deployment
+
+	- To see the revisions and history of Rollouts:
+		- e.g.: kubectl rollout history deployment/myapp-deployment
+
+	- Deployment Strategy
+		- Recreate
+			- in this strategy, all the PODs are removed and then new PODs are created
+		- Rolling Update
+			- in this strategy, each PODs are shut down and then a new one is created. This process is done sequentially.
+		- Note: If the Deployment Strategy not specified, "Rolling Update" is the default strategy
+
+	- Deployment Update methods
+		1) configure the changes on the Deployment Definition file and then do "kubectl apply -f [definition.yaml]"
+		2) do the change in command line
+			- kubectl set image [deployment name] nginx=nginx:1.9.1
+
+	- To undo/Rollback the changes/updates:
+		- kubectl rollout undo deployment/myapp-deployment
