@@ -886,3 +886,20 @@ spec:
 
 	- To undo/Rollback the changes/updates:
 		- kubectl rollout undo deployment/myapp-deployment
+
+
+	* Commands and Arguments
+		- In order to set command to be run immediately after POD is run, use "command" and "args" fields on pod-definition.yml file:
+			- e.g.:
+
+
+apiVersion: v1
+kind: Pod
+metadata:
+  name: ubuntu-sleeper-pod
+spec:
+ containers:
+   - name: ubuntu-sleeper
+     image: ubuntu-sleeper
+     command: ["sleep2.0"]
+     args: ["10"]
