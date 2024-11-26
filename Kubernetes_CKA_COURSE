@@ -854,4 +854,14 @@ spec:
 
 
 
-** Static PODs
+** Monitoring
+	- to monitor the resources of kubernetes, download and use "Metrics-Server"
+		- e.g.: git clone https://github.com/kodekloudhub/kubernetes-metrics-server.git
+	- then deploy the "Metrics-server" by creating all the components downloaded:
+		- e.g.: cd kubernetes-metrics-server
+			kubectl create -f .
+	- to get the info of the resource-usage:
+		- kubectl top node
+		- kubectl top podes
+
+
