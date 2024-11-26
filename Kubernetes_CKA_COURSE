@@ -961,13 +961,6 @@ data:
   APP_COLOR: blue
   APP_MODE: prod
 
-
-
-
-		- To view ConfigMaps
-				- kubectl get configmaps
-		- To get the details of a ConfigMap
-				- kubectl describe configmaps
 			
 
 			2) inject a ConfigMap in a POD-Definition file:
@@ -999,3 +992,81 @@ spec:
 	   - configMapRef:
 	     	name: app-config
 
+
+
+
+		- To view ConfigMaps
+				- kubectl get configmaps
+		- To get the details of a ConfigMap
+				- kubectl describe configmaps
+
+	* Secrets
+		- Phases of using Secrets:
+			1) Creating Secret
+				- example of Secret file
+
+DB_Host: mysql
+DB_User: root
+DB_Password: passwrd
+
+
+				- Imperative:
+					- kubectl create secret generic <secret-name> --from-literal=<key>=<value>
+					- e.g.: kubectl create secret generic \
+					            app-secret --from-literal=DB_Host=mysql
+
+					OR
+					- kubectl create secret generic <secret-name> --from-file=<path-to-file>
+					- e.g.: kubectl create secret generic app-secret --from-file=app_secret.properties
+				
+				- Declarative
+					- e.g.: kubectl create -f secret-data.yaml
+					- contents of secret-data.yaml file:
+
+
+apiVersion: v1
+kind: Secret
+metadata:
+  name: app-secret
+data:
+  Data_Host: mysql
+  DB_User: root
+  DB_Password: passwrd
+
+
+
+		- To view Secrets
+				- kubectl get secrets
+		- To get the details of a secret
+				- kubectl describe secrets
+
+
+			2) inject a Secret in a POD-Definition file:
+				- secret file contents:
+
+apiVersion: v1
+kind: Secret
+metadata:
+  name: app-secret
+data:
+  Data_Host: mysql
+  DB_User: root
+  DB_Password: passwrd
+
+
+				- - pod-definition.yaml file contents:
+
+apiVersion: v1
+kind: Pod
+metadata:
+  name: simple-webapp-color
+spec:
+ containers:
+ - name: simple-webapp-color
+     image: simple-webapp-color
+     ports:
+	   - containerPort: 8080
+
+     envFrom:
+	   - secretRef:
+	     	name: app-secret
