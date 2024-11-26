@@ -928,3 +928,74 @@ spec:
 	   - name: APP_COLOR
 	     value: pink
 
+
+
+
+	* ConfigMaps
+		- when you have lots of definition files, it would be difficult to manage the Environment data within the definition files
+		- we can store all this environment data centrally on ConfigMap file
+		- ConfigMaps are used to pass configuration data in the form of key:value pairs in kubernetes
+		- when a pod is created, the ConfigMap is injected to the POD. So key:value pair are available as environment variables for the application hosted inside the container in the pod
+		- phases of using ConfigMaps:
+			1) create a ConfigMap
+
+				- Imperative
+					- kubectl create ConfigMap <config-name> --from-literal=<key>=<value>
+					- e.g.: kubectl create ConfigMap app-config --from-literal=APP_COLOR=blue \
+																--from-literal=APP_MOD=prod
+
+					OR
+					- kubectl create configmap <config-name> --from-file=<path-to-file>
+					- e.g.: kubectl create configmap \
+							app-config --from-file=app_config.properties
+
+				- Declarative
+					-kubectl create -f config-map.yaml
+					- config-map.yaml file contents:
+
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: app-config
+data:
+  APP_COLOR: blue
+  APP_MODE: prod
+
+
+
+
+		- To view ConfigMaps
+				- kubectl get configmaps
+		- To get the details of a ConfigMap
+				- kubectl describe configmaps
+			
+
+			2) inject a ConfigMap in a POD-Definition file:
+				- config-map.yaml file contents:
+
+				apiVersion: v1
+				kind: ConfigMap
+				metadata:
+				name: app-config
+				data:
+				APP_COLOR: blue
+				APP_MODE: prod
+
+				- pod-definition.yaml file contents:
+
+
+apiVersion: v1
+kind: Pod
+metadata:
+  name: simple-webapp-color
+spec:
+ containers:
+ - name: simple-webapp-color
+     image: simple-webapp-color
+     ports:
+	   - containerPort: 8080
+
+     envFrom:
+	   - configMapRef:
+	     	name: app-config
+
