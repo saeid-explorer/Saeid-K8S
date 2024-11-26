@@ -903,3 +903,28 @@ spec:
      image: ubuntu-sleeper
      command: ["sleep2.0"]
      args: ["10"]
+
+
+
+
+	* Environment Variables
+		- to set an environment variable, use "env:" field in pod-definition.yml file
+			- e.g.:
+			
+
+
+apiVersion: v1
+kind: Pod
+metadata:
+  name: simple-webapp-color
+spec:
+ containers:
+   - name: simple-webapp-color
+     image: simple-webapp-color
+     ports:
+	   - containerPort: 8080
+
+     env:
+	   - name: APP_COLOR
+	     value: pink
+
