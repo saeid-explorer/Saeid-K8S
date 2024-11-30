@@ -1063,10 +1063,32 @@ metadata:
 spec:
  containers:
  - name: simple-webapp-color
-     image: simple-webapp-color
-     ports:
-	   - containerPort: 8080
+   image: simple-webapp-color
+   ports:
+	 - containerPort: 8080
 
-     envFrom:
-	   - secretRef:
-	     	name: app-secret
+envFrom:
+- secretRef:
+	name: app-secret
+
+
+	
+
+	* Multi Container Pods
+		- example of pod-definition.yaml file with two containers:
+
+
+apiVersion: v1
+kind: Pod
+metadata:
+  name: simple-webapp-color
+  labels:
+	name: simple-webapp
+spec:
+  containers:
+  - name: simple-webapp
+    image: simple-webapp-color
+    ports:
+   	  - containerPort: 8080
+  - name: log-agent
+    image: log-agent
