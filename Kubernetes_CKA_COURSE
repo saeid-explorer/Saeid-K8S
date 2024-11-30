@@ -1092,3 +1092,20 @@ spec:
    	  - containerPort: 8080
   - name: log-agent
     image: log-agent
+
+
+
+** Cluster Maintenance
+	- Draining a Node
+		- when you drain a node, the PODs are gracefully terminated from the node they run on and they get recreated on another node. The node also is marked as "Unschedulable",
+		  meaning no PODs can be scheduled on this node
+	- Uncordoning a node
+		- To make a node "schedulable" again after we have drained it, we should "undordon" it
+			- e.g.:  kubectl uncordon node-1
+	- Cordoning a node
+		- "cordon" simply marks a node "Unschedulable", however it doesn't move the existing PODs to another node, it simply prevents the new PODs to be scheduled on this node
+
+	- Cluster Upgrade process
+		 - The components of Kubernetes can be at different versions
+		 - None of the Kubernetes core components(Controller-manager, kube-scheduler, kubelet, kube-proxy) can be in a higher version than "kube-apiserver" version
+		 - Kubectl can be at a version higher than the version of kube-apiserver
