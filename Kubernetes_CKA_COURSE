@@ -1142,4 +1142,24 @@ spec:
 					- execute on master node:
 						- kubectl uncordon node=1
 
+	* Backup & Restore
+		- Backup candidates
+			- Resource configuration
+				- one method is like the following:
+					- kubectl get all --all-namespaces -o yaml > all-deploy-services.yaml
+			- ETCD Cluster
+				- To backup the etcd cluster:
+					- ETCDCTL_API=3 etcdctl \
+						snapshot save snapshot.db
+				- To restore the backup
+					- service kube-apiserver stop
+					- ETCDCTL_API=3 etcdctl \
+						snapshot restore snapshot.db \
+						--data-dir /var/lib/etcd-from-backup \
+						--initial-cluster master-1=https://192.168.5.11:2380,master-2=https://192.168.5.12:2380 \
+						--initial-cluster-token etcd-cluster-1 \
+						--initial-advertise-peer-urls https://${INTERNAL_IP}:2380
+			- Persistent Volumes
+
+** I'm on Security Section
 
