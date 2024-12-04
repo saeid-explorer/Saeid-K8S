@@ -1109,3 +1109,37 @@ spec:
 		 - The components of Kubernetes can be at different versions
 		 - None of the Kubernetes core components(Controller-manager, kube-scheduler, kubelet, kube-proxy) can be in a higher version than "kube-apiserver" version
 		 - Kubectl can be at a version higher than the version of kube-apiserver
+		 - The recommended upgrade path is to upgrade one minor version at a time
+		 - Upgrading a cluster involves 2 major steps:
+		 	1) Upgrade the Master nodes
+				- While upgrading the master nodes, the control plane components go down and the worker nodes are not affected
+			2) Upgrade the Worker nodes 
+				- strategies:
+					1) Upgrading all of the worker nodes at once
+						- In this case, all the PODs are down
+						- this strategy requires down-time
+					2) Upgrade one node at a time
+						- No down-time is required
+					3) Add new Nodes(with newer software version) to the cluster
+						- Then the workloads are moved to the new Nodes, and old Nodes are removed
+		 - Kubeadm has upgrade command to help upgrading the cluster:
+		 	- Kubeadm upgrade plan
+				- It provides the current cluster version, kubeadm version, latest stable version of K8S
+				- Also provides all the control plane components' current and available versions
+				- After upgrading the Kubeadm components, you must manually upgrade the kubelet on each node
+				- Remember: Kubeadm doesn't automatically update or install kubelet
+				- It also gives you the command to upgrade the cluster
+				- Note: Before being able to upgrade the cluster, you must manually upgrade the kubeadm
+				- Note: Kubeadm also follows the same software version as K8S
+				- Note: The worker nodes should be drained before getting upgraded. Here is the drain and upgrade command example on a worker node:
+					- execute on master node:
+						- kubectl drain node-1
+					- execute on worker node:
+						- apt-get upgrade -y kubeadm=1.12.0-00
+						- apt-get upgrade -y kubelet=1.12.0-00
+						- kubeadm upgrade node config --kubelet-version v1.12.0
+						- systemctl restart kubelet
+					- execute on master node:
+						- kubectl uncordon node=1
+
+
