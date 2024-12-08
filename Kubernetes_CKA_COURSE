@@ -1161,5 +1161,87 @@ spec:
 						--initial-advertise-peer-urls https://${INTERNAL_IP}:2380
 			- Persistent Volumes
 
-** I'm on Security Section
 
+
+** Security
+
+	* Securing Hosts
+		- Password based authentication disabled
+		- SSH Key based authentication to be used
+		- Authentication
+			- Files - Username and Passwords
+			- Files - Username and Tokens
+			- Certificates
+			- External Authentication providers - LDAP
+			- Service Accounts
+		- Autorization
+			- RBAC Authorization
+			- ABAC Autorization
+			- Node Authorization
+			- Webhook Mode
+
+	* Authentication
+		- All user access is managed by kube-apiserver
+		- Authentication mechanisms
+			- Static Password Files
+				-   create a csv file including the users and passwords and set it in "kube-apiserver.service" file as follows:
+						--basic-auth-file=user-detail.csv
+				- To authenticate using the basic credentials in accessing the API server, specify user:password in curl command as the following example:
+					- curl -v -k https://master-node-ip:6443/api/v1/pods -u "user1:password123"
+				- This is not a recommended authentication mechanisms
+				- Consider volume mount while providing the auth file in a kubeadm setup
+			- Static Token Files
+				-   create a csv file including the users and tokens and set it in "kube-apiserver.service" file as follows:
+						--token-auth-file=user-detail.csv
+				- To authenticate using the basic credentials in accessing the API server, specify user:token in curl command as the following example:
+					- curl -v -k https://master-node-ip:6443/api/v1/pods --header "Authorization: Bearer KpjCVbI7rCFAHYPkBzRb7gu1cUc4B"
+				- This is not a recommended authentication mechanisms
+				- Consider volume mount while providing the auth file in a kubeadm setup
+			- Certificates
+				- example of Creating Public-Private Key pair:
+					- openssl genrsa -out my-bank.key 1024
+					- Creating public key from an input private key:
+						- openssl rsa -in my-bank.key -pubout > mybank.pem
+				- Requesting a Certificate from a CSA(Certificate Signing Authority). This request is called CSR(Certificate Signing Request):
+					- openssl req -new -key my-bank.key -out my-bank.csr -subj "/C=US/ST=CA/O=MyOrg,Inc./CN=my-bank.com"
+				- Certificate Authority
+					- Generate keys
+						- openssl genrsa -out ca.key 2048
+					- Certificate Signing Request
+						- openssl req -new -key ca.key -subj "/CN=KUBERNETES-CA" -out ca.csr
+					- Sign Certificates
+						- openssl x509 -req -in ca.csr -signkey ca.key -out ca.crt
+				- ADMIN User
+					- Generate keys
+						- openssl genrsa -out admin.key 2048
+					- Certificate Signing Request
+						- openssl req -new -key admin.key -subj "/CN=kube-admin" -out admin.csr
+					- Sign Certificates
+						- openssl x509 -req -in admin.csr -CA ca.crt -CAkey ca.key -out admin.crt
+				- To use Certificate when communicating with kube-apiserver
+					- 1) you can specify the certificate in curl command:
+						- e.g.: curl https://kube-apiserver:6443/api/v1/pods \
+									--key admin.key --cert admin.crt --cacert ca.crt
+					2) you can specify the certificate in kube-config.yaml
+						- e.g.:
+
+
+apiVersion: v1
+clusters:
+- cluster:
+	certificate-authority: ca.crt
+	server: https://kube-apiserver:6443
+  name: kubernetes
+kind: Config
+users:
+- name: kubernetes-admin
+  user:
+    client-certificate: admin.crt
+	client-key: admin.key
+
+
+			- Identity Services
+
+
+
+I'm on TLS in Kubernetes Video
