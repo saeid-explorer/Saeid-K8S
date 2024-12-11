@@ -1244,4 +1244,8 @@ users:
 
 
 
-I'm on TLS in Kubernetes Video
+	* Certificate Generation in K8S
+		- Tools to generate Certificate
+			- EasyRSA
+			- OpenSSL
+			- CFSSL
