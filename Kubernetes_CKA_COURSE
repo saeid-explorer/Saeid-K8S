@@ -1372,3 +1372,6 @@ users:
 				- this group includes apis like /apps, /extensions, networking.k8s.io, ...
 				- listing named APIs:
 					- curl http://localhost:6443/apis -k | grep "name"
+
+
+* I'm on "Role based access controls" video
