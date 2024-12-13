@@ -1240,12 +1240,50 @@ users:
 	client-key: admin.key
 
 
+
+	* View Certificates in an existing cluster
+		- check the following folder if you have deployed K8S using Kubeadm:
+			- cat /etc/kubernetes/manifests/kube-apiserver.yaml
+		- Then take each certificate (e.g. /etc/kubernetes/pki/apiserver.crt) and look inside it:
+			-  openssl x509 -in /etc/kubernetes/pki/apiserver.crt -text -noout
+		- Also check the service details:
+			- in case you've deployed K8S from scratch
+				- journalctl -u etcd.service -l
+			- in case you've deployed K8S using Kubeadm
+				- kubectl logs etcd-master
+	
+
+	* Certificate Workflow & API
+		- Using Certificates API, Admin will:
+			1) Create CertificateSigningRequest object
+			e.g.:
+			
+- jane-csr.yaml:
+
+apiVersion: certificates.k8s.io/v1beta1
+kind: CertificateSigningRequest
+metadata:
+  name: jane
+spec:
+  groups:
+  - system:authenticated
+  usages:
+  - digital signature
+  - key encipherment
+  - server auth
+  request:
+		[base64 of .csr file contents]
+
+	
+			2) Review Requests
+				- kubectl get csr
+			3) Approve Requests
+				- kubectl certificate approve jane
+				* Note: to view the certificate:
+					- kubectl get csr jane -o yaml
+			4) Share Certs to Users
+				- first decode the certificate section of the certificate:
+					- echo "[certificate]" | base64 --decode
+					- then share with the end-user
+			
 			- Identity Services
-
-
-
-	* Certificate Generation in K8S
-		- Tools to generate Certificate
-			- EasyRSA
-			- OpenSSL
-			- CFSSL
