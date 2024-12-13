@@ -1285,5 +1285,90 @@ spec:
 				- first decode the certificate section of the certificate:
 					- echo "[certificate]" | base64 --decode
 					- then share with the end-user
+
+	*Note: All the certificate-related operations are carried out by "Controller Manager"
 			
-			- Identity Services
+
+
+	* KUBECONFIG
+		- using certificates in kubectl command:
+			- e.g.:
+				- kubectl get pods
+					--server my-kube-playground:6443
+					--client-key admin.key
+					--client-certificate admin.crt
+					--certificate-authority ca.crt
+		- instead of specifying the certificates everytime in commandline, we can move the above fields to
+			the kubeconfig file and then specify this file as kubeconfig option in our command:
+				- kubectl get pods --kubeconfig config
+		-by default kubeconfig file is a file named "config" with this path: $HOME/.kube/config
+		- kubeconfig structure:
+			- It has three sections:
+				- Clusters
+				- Contexts
+					- context defines which user account will be used to access which cluster
+				- Users
+		
+		
+		- example kubeconfig file:
+
+
+apiVersion: v1
+kind: Config
+
+clusters:
+
+- name: my-kube-playground
+  cluster:
+    certificate-authority: ca.cert
+    server: https://my-kube-playground:6443
+
+contexts:
+
+- name: my-kube-admin@my-kube-playground
+  context:
+    cluster: my-kube-playground
+	user: my-kube-admin
+
+users:
+
+- name: my-kube-admin
+  user:
+    client-certificate: admin.crt
+	client-key: admin.key
+
+
+
+
+
+		- viewing contents of kubeconfig file:
+			- kubectl config view
+
+		- changing the current context:
+			- e.g.: kubectl config use-context prod-user@production
+
+
+
+
+	* API groups
+		- to check the version of kubeapi-server:
+			- curl https://kube-master:6443/version
+		- version API:
+			- to check the version of K8S
+		- metrics and healthz APIs:
+			- to monitor the health of the cluster
+		- logs API:
+			- used for integrating with third-party logging applications
+		
+		- APIs responsible for cluster's functionality:
+			- core group
+				- /api
+				- this is where all core functionalities exist(namespaces, pods, secrets,...)
+				- listing core APIs:
+					- curl http://localhost:6443 -k
+			- named group
+				- /apis
+				- this is more organized
+				- this group includes apis like /apps, /extensions, networking.k8s.io, ...
+				- listing named APIs:
+					- curl http://localhost:6443/apis -k | grep "name"
