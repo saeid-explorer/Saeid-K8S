@@ -1374,4 +1374,58 @@ users:
 					- curl http://localhost:6443/apis -k | grep "name"
 
 
-* I'm on "Role based access controls" video
+* Role Based Access Controls(RBAC)
+	- To create a Role using a definition file(e.g.):
+
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: developer
+rules:
+- apiGroups: [""]
+  resources: ["pods"]
+  verbs: ["list", "get", "create", "update", "delete"]
+
+- apiGroups: [""]
+  resources: ["ConfigMap"]
+  verbs: ["create"]
+
+
+
+	- To bind an RBAC to a user using a definition file(e.g.):
+
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: devuser-developer-Binding
+subjects:
+- kind: User
+  name: dev-user
+  apiGroup: rbac.authorization.k8s.io
+roleRef:
+kind: Role
+name: developer
+apiGroup: rbac.authorization.k8s.io
+
+
+	- To view the created Roles:
+		- kubectl get roles
+	- To view the created Role bindings:
+		- kubectl get rolebindings
+	- To get the details of a role
+		- kubectl describe role [role-name]
+	- To get the details of a role binding
+		- kubectl describe rolebinding [rolebinding-name]
+	- To check if your current user has access to a resource in a particular cluster(e.g.):
+		- kubectl auth can-i create deployments
+		OR
+		- kubectl auth can-i delete nodes
+	- To check if a particular user has access to a resource in a particular cluster(e.g.):
+		- kubectl auth can-i create deployments --as dev-user
+		OR
+		- kubectl auth can-i create pods --as dev-user
+
+
+
+* Cluster Roles
+	-
