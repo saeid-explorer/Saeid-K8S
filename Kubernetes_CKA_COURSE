@@ -1428,4 +1428,91 @@ apiGroup: rbac.authorization.k8s.io
 
 
 * Cluster Roles
-	-
+	-  cluster roles are like roles, except they are for cluster-scoped(non-namespaced) resources
+	- for example to create a cluster role to define access to nodes in a cluster, use the following definition file:
+
+
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: cluster-administrator
+rules:
+- apiGroups: [""]
+  resources: ["nodes"]
+  verbs: ["list", "get", "create", "delete"]
+
+
+	- To bind/link a user to a cluster role use the following definition file:
+
+
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: cluster-admin-role-Binding
+subjects:
+- kind: User
+  name: cluster-admin
+  apiGroup: rbac.authorization.k8s.io
+roleRef:
+kind: ClusterRole
+name: cluster-administrator
+apiGroup: rbac.authorization.k8s.io
+
+
+
+
+* Security Contexts
+	- Security Context can be defined in POD and Container level
+	- example of defining SecurityContext in a pod definition file:
+
+
+apiVersion: v1
+kind: Pod
+metadata:
+  name: web-pod
+spec:
+  containers:
+       - name: ubuntu
+	     image: ubuntu
+		 command: ["sleep", "3600"]
+		 
+		 securityContext:
+		   runAsUser: 1000
+
+		   capabilities:
+		       add: ["MAC_ADMIN"]
+
+
+* Network policy
+	- example of creating a network policy:
+
+
+apiVersion:networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: db-policy
+spec:
+   podSelector:
+     matchLabels:
+	   role: db
+policyTypes:
+- Ingress
+ingress:
+- from:
+  - podSelector:
+      matchLabels:
+	    name: api-pod
+  ports:
+  - protocol: TCP
+    port: 3306
+ 
+
+
+ 	- Solutions that support Network Policies:
+		- Kube-router
+		- Calico
+		- Romana
+		- Weave-net
+	
+	- Solutions that Do Not Support Network Policies:
+		- Flannel
