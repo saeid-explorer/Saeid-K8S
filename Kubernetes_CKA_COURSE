@@ -1604,3 +1604,9 @@ spec:
   hostPath:
      path: /data
 	 type: Directory
+
+
+
+	
+	* Persistent Volumes(PV)
+	
