@@ -1581,3 +1581,26 @@ ingress:
 
 	* Container Storage Interface(CSI)
 		- To support multiple storage solutions(e.g. Portworx, Amazon EBS, DELL EMS, GlusterFS), CSI was introduced
+
+	* Volume Mounting in K8S Pods
+		- example of volume mounting via a Pod Definition file:
+
+apiVersion: v1
+kind: Pod
+metadata:
+  name: random-number-generator
+spec:
+  containers:
+  - image: alpine
+    name: alpine
+	command: ["/bin/sh", "-c"]
+	args: ["shuf -i 0-100 n 1 >> /opt/number.out"]
+	volumeMounts:
+	- mountPath: /opt
+	  name: data-volume
+
+  volumes:
+  - name: data-volume
+  hostPath:
+     path: /data
+	 type: Directory
