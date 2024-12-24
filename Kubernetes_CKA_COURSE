@@ -1519,4 +1519,59 @@ ingress:
 
 
 
-* I'm on "Storage" section
+
+** Storage
+	
+	* Storage in Docker
+		- file system structure of Docker Storage
+			- /var/lib/Docker
+				- aufs
+				- containers
+				- image
+				- volumes
+		
+		- Docker's layered Architecture
+			- each line of instruction in Dockerfile creates a new layer 
+			- each layer only stores the changes from the previous layer
+			- when building the image with "docker build" command, it gets ReadOnly
+			- when running a container using the created image (e.g) "docker run sample/my-custom-app", a new writeable layer (called Container Layer) will be created on top of all the image layers
+		- creating a persistent volume in Docker container(e.g.)
+			- docker volume create data_volume
+			- docker run -v data_volume:/var/lib/mysql mysql
+		- To mount any other directory/volume other than the ones located at /var/lib/docker/volumes, you can use the following format(this is called bind mounting ):
+			- (e.g) docker run -v /data/mysql:/var/lib/mysql mysql
+		- the new format of mounting(bind mounting):
+			- (e.g.) docker run --mount type=bind,source=/data/mysql,target=/var/lib/mysql mysql
+		
+		* Storage Drivers
+			- Storage drivers help manage storage on images and containers
+			- Docker uses Storage Drivers to enable layered architecture
+			- Some of the common storage drivers:
+				- AUFS
+				- ZFS
+				- BTRFS
+				- Device Mapper
+				- Overlay
+				- Overlay2
+			- Selecting storage driver depends on the OS
+			* Note: Volumes are not handled by Storage Drivers
+		
+		* Volume Drivers
+			- Volumes are handled by Volume Drivers Plugin
+			- the Default Volume Driver Plugin is "Local"
+			- The other volume drivers
+				- Azure File Storage
+				- Convoy
+				- DigitalOcean Block Storage
+				- Flocker
+				- gce-docker
+				- GlusterFS
+				- NetApp
+				- RexRay
+				- Portworx
+				- Vmware vSphere Storage
+		
+		
+		* Container Storage Interface
+			
+
