@@ -1572,6 +1572,12 @@ ingress:
 				- Vmware vSphere Storage
 		
 		
-		* Container Storage Interface
-			
+	* Container Runtime Interface(CRI)
+		- It's the standard that defines how an orchestration solution like K8S would communicate with Container Runtimes(e.g. Docker)
+		- In the future, if any new Container Runtime is developed, They can simply follow the CRI standards and that new Container Runtime would work with K8S easily
+	
+	* Container Network Interface(CNI)
+		- To extend support for different Networking Solutions(e.g. Weaveworks, flannel, cilium), the Container Network Interface is introduced
 
+	* Container Storage Interface(CSI)
+		- To support multiple storage solutions(e.g. Portworx, Amazon EBS, DELL EMS, GlusterFS), CSI was introduced
