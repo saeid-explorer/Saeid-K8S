@@ -1609,4 +1609,50 @@ spec:
 
 	
 	* Persistent Volumes(PV)
-	
+		- example of defining a PV via a definition file:
+
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+   name: pv-vol1
+spec:
+  accessModes:
+      - ReadWriteOnce 
+  capacity:
+      storage: 1Gi
+  hostPath:
+     path: /tmp/data
+
+
+	* Persistent Volume Claims(PVC)
+		- Persistent Volumes and Persistent Volume Claims are two seperate objects in the K8S namespace
+		- PVs are assigned/bined based on the PVCs
+		- Selectors can also be used on binding
+		- To view the PVCs:
+			- kubectl get persistentvolumeclaim
+		- Example of PVC definition file:
+
+
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: myclaim
+spec:
+  accessModes:
+     - ReadWriteOnce
+
+  resources:
+     requests:
+	   storage: 500Mi
+
+		- To delete PVCs:
+			- kubectl delete persistentvolumeclaim myclaim
+
+		
+		- Persistent Volume Reclaim Policy:
+			- Retain
+			- Delete
+			- Recycle
+
+
+** I'm on Networking Secion
