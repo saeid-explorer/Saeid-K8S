@@ -1656,3 +1656,17 @@ spec:
 
 
 ** Networking
+
+	- Creating a Network Namespace
+		- (e.g.)  ip netns add red
+	
+	- Listing the Namespaces
+		- ip netns
+	
+	- Listing the interfaces on the host
+		- ip link
+	
+	- Listing the interfaces inside a Namespace
+		- (e.g.) ip netns exec red ip link
+				   OR
+				 ip -n red link
