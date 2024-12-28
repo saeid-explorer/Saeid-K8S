@@ -1670,3 +1670,13 @@ spec:
 		- (e.g.) ip netns exec red ip link
 				   OR
 				 ip -n red link
+	- Listing the Route Table inside a Namespace
+		- (e.g.) ip netns exec red route
+
+	- Creating a link between two VMs
+		- (e.g.) ip link add veth-red type veth peer name veth-blue
+	- Creating a namespace for a link
+		- (e.g.) ip link set veth-red netns red
+	- adding "IP Address" to an interface on a specific namespace
+		- (e.g.) ip -n red addr add 192.168.15.1 dev veth-red
+		
