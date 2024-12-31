@@ -1679,4 +1679,10 @@ spec:
 		- (e.g.) ip link set veth-red netns red
 	- adding "IP Address" to an interface on a specific namespace
 		- (e.g.) ip -n red addr add 192.168.15.1 dev veth-red
-		
+	- bringing the interfaces up in a namespace
+		- (e.g.) ip -n red link set veth-red up
+	- Adding Route to a specific namespace
+		- (e.g.) ip netns exec blue ip route add 192.168.1.0/24 via 192.168.15.5
+
+
+	* I'm in "Prerequisite-CNI" video
