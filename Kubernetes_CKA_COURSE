@@ -1743,3 +1743,11 @@ spec:
 				- Must manage IP Address assignment to PODS
 				- Must return results in a specific format
 			- Weave by default allocates the IP addresses in the range of 10.32.0.0/12
+
+
+
+	* CoreDNS in Kubernetes
+		- CoreDNS is deployed as a POD(in 2 PODs for redundancy) in the kube-system namespace
+		- It requires a configuration file(e.g. /etc/coredns/Corefile)
+		- in the kubelet configuration file, the IP and Domain of the DNS Server is specified(ClusterDNS&ClusterDomain)
+			 
