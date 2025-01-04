@@ -1701,4 +1701,45 @@ spec:
 			- Kube-Controller-Manager Port 10252
 	
 	* Pod Networking
-		- 
+		- Networking modules
+			- Every POD should have an IP Address
+			- Every POD should be able to communicate with every other POD in the same node
+			- Every POD should be able to communicate with every other POD on the other nodes without NAT
+		
+		- To configure CNI:
+			- in kubelet config file:
+				- set "--cni-conf-dir=/etc/cni/net.d" (as an example path)
+				- set "--cni-bin-dir=/etc/cni/bin" (as an example path)
+				- use "./net-script.sh add <container> <namespace>" command format to run a container with network interfaces on the script
+					- format of net-script.sh
+
+	ADD)
+	 # Create veth pair
+	 # Attach veth pair
+	 # Assign IP Address
+	 # Bring Up Interface
+	 ip -n <namespace> link set ......
+	DEL)
+	 # Delete veth pair
+	 ip link del .....
+
+
+
+
+	* Weaveworks
+		- is one of CNI solutions 
+		- Weave can be deployed as daemons on each node of the Cluster or they can be deployed as PODs in the cluster
+		- Deploying weave:
+			- kubectl apply -f "https://cloud.weave.works/k8s/net?k8s-version=$(kubectl version | base64 | tr -d '\n')"
+			- this will deploy weave as daemonset(one POD per each node)
+			- to get the deployed pods:
+				- kubectl get pods -n kube-system
+	
+
+		- IP Address Management
+		 	- CNI Plugin Responsibilities
+				- Must support arguments ADD/DEL/check
+				- Must support parameters container id, network ns, etc.
+				- Must manage IP Address assignment to PODS
+				- Must return results in a specific format
+			- Weave by default allocates the IP addresses in the range of 10.32.0.0/12
