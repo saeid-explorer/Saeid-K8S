@@ -1685,4 +1685,20 @@ spec:
 		- (e.g.) ip netns exec blue ip route add 192.168.1.0/24 via 192.168.15.5
 
 
-	* I'm in "Prerequisite-CNI" video
+	* Container Runtime Interface
+		- Container Runtime must create network namespace
+		- Identify network the container must attach to
+		- Container Runtime to invoke Network Plugin (bridge) when container is ADDed
+		- Container Runtime to invoke Network Plugin (bridge) when container is DELeted
+		- JSON format of the Network Configuration
+
+	* Cluster Networking
+		- K8S uses the following ports
+			- ETCD Port 2379 & 2380
+			- Kube-API Port 6443
+			- Kubelet Port 10250
+			- Kube-Scheduler Port 10251
+			- Kube-Controller-Manager Port 10252
+	
+	* Pod Networking
+		- 
