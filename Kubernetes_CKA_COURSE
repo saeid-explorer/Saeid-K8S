@@ -1752,5 +1752,109 @@ spec:
 		- in the kubelet configuration file, the IP and Domain of the DNS Server is specified(ClusterDNS&ClusterDomain)
 
 	* Ingress
-	
+		- Ingress helps your users access your application using a single externally accessible URL that you can configure to route
+		to different services within your cluster based on the URL POD
+		- It also implements SSL security 
+		- Ingress is a L7 loadbalancer built-in to the K8S cluster that can be configured using native K8S primitives just like
+		any other object in the K8S
+		- you should expose it to make it accessible to outside the cluster(using NodePort or Loadbalancer)
+		- Steps to use Ingress:
+			1) Deploy
+				- deploying a supported solution(e.g. NGINX, HAPROXY, TRAEFIK, Contour, Istio) which is called an "INGRESS CONTROLLER"
+				- K8S Cluster doesn't come with INGRESS CONTROLLER by default
+				- example of defining an NGINX INGRESS CONTROLLER using a YAML definition file:
+
+
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: nginx-ingress-controller
+spec:
+  replicas:
+  selector:
+    matchLabels:
+	  name: nginx-ingress
+  template:
+    metadata:
+	  labels:
+	    name: nginx-ingress
+	spec:
+	  containers:
+	    - name: nginx-ingress-controller
+		  image: quay.io/kubernetes-ingress-controller/nginx-ingress-controller:0.21.0
+	  args:
+	    - /nginx-ingress-controller
+		- --configmap=$ (POD_NAMESPACE) /nginx-configuration
+
+	  env:
+	    - name: POD_NAME
+		  valueFrom:
+		    fieldRef:
+			  fieldPath: metadata.name
+		- name: POD_NAMESPACE
+		  valueFrom:
+		    fieldRef:
+              fieldPath: metadata.namespace
+
+	  ports:
+	    - name: http
+		  containerPort: 80
+		- name: https
+		  containerPort: 443
+
+
+
+				- we then require a service to expose the Ingress to the outside. An example service definition:
+
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: nginx-ingress
+spec: 
+  type: NodePort
+  ports:
+  - port: 80
+    targetPort: 80
+	protocol: TCP
+	name: http
+  - port: 443
+    targetPort: 443
+	protocol: TCP
+	name: https
+  selector:
+    name: nginx-ingress
+
+ 
+
+				- we then require a service-account with a set of specific set of permissions with correct Roles and RoleBindings
+
+
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: nginx-ingress-serviceaccount
+  
+
+
+			2) Configure
+				- use a set of rules which are called "INGRESS RESOURCES" to configure INGRESS(using definition files)
+				- defining rules(example)
 			 
+
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: ingress-wear-watch
+spec:
+  rules:
+  - http:
+      paths:
+	  - path: /wear
+	    backend:
+		  serviceName: wear-service
+		  servicePort: 80
+	  - path: /watch
+	    backend:
+		  serviceName: watch-service
+		  servicePort: 80
