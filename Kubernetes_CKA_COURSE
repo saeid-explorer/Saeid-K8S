@@ -1868,7 +1868,19 @@ spec:
 
 
 ============================================================================================ KUBERNETES In Action Book - Marko Luksa ======================================================================================================
-* Forwarding a Local Network Port to a Port in the POD
-	- kubectl port-forward [pod-name] [local-port]:[pod-port]
+**Pods: Running Containers in Kubernetes
 
-* Organizing PODs with Labels
+	* Forwarding a Local Network Port to a Port in the POD
+		- kubectl port-forward [pod-name] [local-port]:[pod-port]
+
+
+** Replication and other Controllers: Deploying Managed Pods
+
+	* Keeping PODs Healthy
+		* Liveness Probes
+			- Kubernetes can check if a container is still alive through "liveness probes"
+			- Kubernetes can probe a container using one of the three mechanisms
+				- HTTP GET 
+				- TCP Socket
+				- Exec Probe
+	
