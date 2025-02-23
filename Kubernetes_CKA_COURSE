@@ -1858,3 +1858,17 @@ spec:
 	    backend:
 		  serviceName: watch-service
 		  servicePort: 80
+
+
+
+
+
+
+
+
+
+============================================================================================ KUBERNETES In Action Book - Marko Luksa ======================================================================================================
+* Forwarding a Local Network Port to a Port in the POD
+	- kubectl port-forward [pod-name] [local-port]:[pod-port]
+
+* Organizing PODs with Labels
