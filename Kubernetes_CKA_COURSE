@@ -1883,4 +1883,24 @@ spec:
 				- HTTP GET 
 				- TCP Socket
 				- Exec Probe
+			- Adding a liveness probe to a pod(e.g.):
+
+apiVersion: v1
+kind: pod
+metadata:
+  name: kubia-liveness
+spec:
+  containers:
+  - image: luksa/kubia-unhealthy
+    name: kubia
+    livenessProbe:
+      httpGet:
+        path: /
+        port: 8080
+
+
+			- 3 Parts of a Replication Controller:
+				- Label Selector
+				- Replica Count
+				- POD Template
 	
