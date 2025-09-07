@@ -1867,6 +1867,8 @@ spec:
 
 
 
+
+
 ============================================================================================ KUBERNETES In Action Book - Marko Luksa ======================================================================================================
 **Pods: Running Containers in Kubernetes
 
@@ -1903,4 +1905,82 @@ spec:
 				- Label Selector
 				- Replica Count
 				- POD Template
-	
+
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ HELM ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+- It's called a package manager for K8S
+- commands(e.g.):
+	- helm install wordpress
+	- helm upgrade wordpress
+	- helm rollback wordpress
+	- helm uninstall wordpress
+	- helm install my-site bitnami/wordpress
+		- here, "my-site" is release-name
+
+- Installing Helm(Ubuntu)
+		#sudo apt-get install curl gpg apt-transport-https --yes
+		#curl -fsSL https://packages.buildkite.com/helm-linux/helm-debian/gpgkey | gpg --dearmor | sudo tee /usr/share/keyrings/helm.gpg > /dev/null
+		#echo "deb [signed-by=/usr/share/keyrings/helm.gpg] https://packages.buildkite.com/helm-linux/helm-debian/any/ any main" | sudo tee /etc/apt/sources.list.d/helm-stable-debian.list
+		#sudo apt-get update
+		#sudo apt-get install helm
+
+- Helm Components
+	- Chart: Collection of files and they contain all the instructions that helm needs to know to be able to create the collection of objects that you need in K8S Cluster
+	- Release: 
+		- When a chart applies to a cluster, a Release is created. A single installation of an Application using a helm chart
+		- Within each release, you have multiple revisions.
+		- Each revision is like a snapshot of the application
+	- Metadata
+
+
+- Helm Repositories
+	- Appscode
+	- TrueCharts
+	- Bitnami
+	- Community Operators
+	- ArtifactHub.io
+		- All of the repositories' charts are listed here
+
+- Helm Charts
+	- Directory Structure
+		- Templates
+		- values.yaml (Configuration Values)
+		- Chart.yaml  (Chart Information)
+		- LICENSE     (Chart License)
+		- README.md   (Readme file)
+		- Charts	  (Dependency Charts)
+
+	- Searching charts
+		- (e.g.) helm search wordpress
+		- (e.g.) helm search hub wordpress
+			- this will search for "wordpress" charts on ArtifactHub.io Chart Repository
+
+	- Installing a chart
+		- first add the repo
+			- e.g.: helm repo add bitnami https://charts.bitnami.com/bitnami
+		- Then install the chart
+			- e.g.: helm install my-release bitnami/wordpress
+	- Listing existing charts
+		- helm list
+	- Uninstalling an existing chart
+		- e.g. helm uninstall my-release
+
+	- Customizing Chart Parameters
+		- using the set option when installing the chart
+			- e.g.: helm install --set wordpressBlogName="Helm Tutorials" my-release bitname/wordpress
+		- using a custom values.yaml file
+			- e.g. helm install --values custom-values.yaml my-release bitname/wordpress
+			- custom-values.yaml:
+				wordpressBlogName: Helm Tutorials
+				wordpressEmail: john@example.com
+		- changin the built-in(original) values.yaml file
+			- first pull the chart
+				- e.g.: helm pull --ntar bitnami/wordpress
+				- change the values in values.yaml file and save it
+				- install the chart using:
+					- helm install my-release ./wordpress
+	- Lifecycle Management with Helm
+		- get the revisions
+			- e.g. helm history my-release
+		- rollback to a specific revision
+			- e.g. helm rollback my-release 1
