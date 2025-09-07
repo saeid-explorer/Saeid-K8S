@@ -1861,52 +1861,6 @@ spec:
 
 
 
-
-
-
-
-
-
-
-
-============================================================================================ KUBERNETES In Action Book - Marko Luksa ======================================================================================================
-**Pods: Running Containers in Kubernetes
-
-	* Forwarding a Local Network Port to a Port in the POD
-		- kubectl port-forward [pod-name] [local-port]:[pod-port]
-
-
-** Replication and other Controllers: Deploying Managed Pods
-
-	* Keeping PODs Healthy
-		* Liveness Probes
-			- Kubernetes can check if a container is still alive through "liveness probes"
-			- Kubernetes can probe a container using one of the three mechanisms
-				- HTTP GET 
-				- TCP Socket
-				- Exec Probe
-			- Adding a liveness probe to a pod(e.g.):
-
-apiVersion: v1
-kind: pod
-metadata:
-  name: kubia-liveness
-spec:
-  containers:
-  - image: luksa/kubia-unhealthy
-    name: kubia
-    livenessProbe:
-      httpGet:
-        path: /
-        port: 8080
-
-
-			- 3 Parts of a Replication Controller:
-				- Label Selector
-				- Replica Count
-				- POD Template
-
-
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ HELM ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 - It's called a package manager for K8S
 - commands(e.g.):
@@ -1984,3 +1938,49 @@ spec:
 			- e.g. helm history my-release
 		- rollback to a specific revision
 			- e.g. helm rollback my-release 1
+
+
+
+
+
+
+
+
+============================================================================================ KUBERNETES In Action Book - Marko Luksa ======================================================================================================
+**Pods: Running Containers in Kubernetes
+
+	* Forwarding a Local Network Port to a Port in the POD
+		- kubectl port-forward [pod-name] [local-port]:[pod-port]
+
+
+** Replication and other Controllers: Deploying Managed Pods
+
+	* Keeping PODs Healthy
+		* Liveness Probes
+			- Kubernetes can check if a container is still alive through "liveness probes"
+			- Kubernetes can probe a container using one of the three mechanisms
+				- HTTP GET 
+				- TCP Socket
+				- Exec Probe
+			- Adding a liveness probe to a pod(e.g.):
+
+apiVersion: v1
+kind: pod
+metadata:
+  name: kubia-liveness
+spec:
+  containers:
+  - image: luksa/kubia-unhealthy
+    name: kubia
+    livenessProbe:
+      httpGet:
+        path: /
+        port: 8080
+
+
+			- 3 Parts of a Replication Controller:
+				- Label Selector
+				- Replica Count
+				- POD Template
+
+
