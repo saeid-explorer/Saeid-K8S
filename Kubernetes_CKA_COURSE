@@ -2019,6 +2019,39 @@ k8s/
 	- Helm templates are not valid YAML as they use go templating syntax
 		- Complex templates become hard to read
 
+- Start using Kustomize
+	- first install it
+	- then you must create a file named "kustomization.yaml"
+		- This file should contain the list of K8S resources that should be managed by kustomize
+		- This file should also contain all of the customizations that we want to apply
+	- So for example we have these files as resources(under k8s directory) to be customized along with kustomization.yaml
+		- nginx-depl.yml
+		- nginx-service.yml
+		- kustomization.yaml
+	- kustomization.yaml looks like this:
+		#kubernetes resources to be managed by kustomize
+		resources:
+		    nginx-deployment.yaml
+		    nginx-service.yaml
+		
+		#customizations that need to be made
+		commonLabels:
+		  company: KodeKloud
+	- now we run the following command to combine all the manifests/resources and apply the defined transformations:
+		- kustomize build k8s/
+	- The "kustomize build" command does not apply/deploy the kubernetes resources to a cluster
+		- The output needs to be redirected to the kubectl apply command
+
+- Kustomize Output
+	- The command to run Kustomize, build all the configs and they apply those configs
+		- (e.g.) kustomize build k8s/ | kubectl apply -
+	- The other way to apply the kustomize is:
+		- kubectl apply -k k8s/	 
+	- To delete the Kustomize:
+		- kustomize build k8s/ | kubectl delete -f
+		or
+		- kubectl delete -k k8s/
+
 
 ============================================================================================ KUBERNETES In Action Book - Marko Luksa ======================================================================================================
 **Pods: Running Containers in Kubernetes
