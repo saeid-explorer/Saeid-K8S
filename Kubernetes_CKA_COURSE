@@ -1940,10 +1940,84 @@ spec:
 			- e.g. helm rollback my-release 1
 
 
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ Kustomize ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+- Why to use it?
+	- It's introduced to solve the problem of defining the customized K8S configs for different environments
+	- We want a way to reuse our K8S configs and only modify what needs to be changed in a per-environment basis
+
+- base
+	- the config that's going to be identical across all your environments 
+	- any configs or resources that you know to be the same across all your environments, you put on your base config
+	- it also presents default values
+	- base example:
+
+		apiVersion:apps/v1
+		kind: Deployment
+		metadata:
+		  name: nginx-deployment
+		spec:
+		  replicas: 1
+		  selector:
+		    matchLabels:
+		      component: nginx
+		   template:
+		     metadata:
+		       labels:
+		         component: nginx
+		     spec:
+		       containers:
+		         - name: nginx
+		           image: nginx
 
 
+- overlays
+	- the overlays allow us to customize the behaviour on a per-environment-basis
+	- so we create an overlay for each one of our environments
+	- overlay examples(for different environments):
 
+		- overlays/dev
+			spec:
+			  replicas:1
 
+		- overlays/stg
+			spec:
+			  replicas:2
+
+		- overlays/prod
+			spec:
+			  replicas:5
+
+- Forder structure
+	- When using Kustomize, your folder structure will look like this(e.g.):
+
+k8s/
+	base/
+		kustomization.yaml
+		nginx-depl.yaml
+		service.yaml
+		redis-depl.yaml
+	overlays/
+		dev/
+			kustomization.yaml
+			config-map.yaml
+		stg/
+			kustomization.yaml
+			config-map.yaml
+		prod/
+			kustomization.yaml
+			config-map.yaml
+
+- Kustomize comes built-in with kubectl so no other packages need to be installed
+	- May still want to install the kustomize cli to get the latest version. kubectl doesn't come with the latest version
+- Does not require learning how to use any complex & hard to read templating systems(like helm)
+- Every artifact the Kustomize uses is in plain YAML and can be validated and processed as such
+
+- Kustomize vs Helm
+	- Helm makes use of go templates to allow assigning variables to properties
+	- Helm is more than just a tool to customize configurations on a per environment basis. Helm is also a package manager for your App
+	- Helm provides extra features like conditionals, loops, functions, and hooks
+	- Helm templates are not valid YAML as they use go templating syntax
+		- Complex templates become hard to read
 
 
 ============================================================================================ KUBERNETES In Action Book - Marko Luksa ======================================================================================================
