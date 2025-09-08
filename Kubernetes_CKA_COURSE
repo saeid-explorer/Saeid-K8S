@@ -2118,6 +2118,9 @@ k8s/
 		- this way we can keep the kustomization.yaml in root directory as clean as possible
 
 
+
+
+
 ============================================================================================ KUBERNETES In Action Book - Marko Luksa ======================================================================================================
 **Pods: Running Containers in Kubernetes
 
@@ -2155,4 +2158,5 @@ spec:
 				- Replica Count
 				- POD Template
 
+- Common Transformers
 
