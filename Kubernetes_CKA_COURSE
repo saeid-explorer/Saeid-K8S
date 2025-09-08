@@ -2048,9 +2048,74 @@ k8s/
 	- The other way to apply the kustomize is:
 		- kubectl apply -k k8s/	 
 	- To delete the Kustomize:
-		- kustomize build k8s/ | kubectl delete -f
+		- kustomize build k8s/ | kubectl delete -f -
 		or
 		- kubectl delete -k k8s/
+
+- Multiple Directories
+	- When our configs are in multiple directories, kustomize can be helpful
+	- suppose here is the directory structure:
+		k8s/
+			kustomization.yaml
+			api/
+				api-depl.yaml
+				api-service.yaml
+			db/
+				api-depl.yaml
+				api-service.yaml
+
+	- and here is the contents of kustomization.yaml:
+		apiVersion: kustomize.config.k8s.io/v1beta1
+		kind: Kustomization
+		
+		# kubernetes resources to be managed by kustomize
+		resources:
+		  - api/api-depl.yaml
+		  - api/api-service.yaml
+		  - db/db-depl.yaml
+		  - db/db-service.yaml
+	- so the only command we need to customize and apply the configs is:
+		- kustomize build k8s/ | kubectl apply -f -
+		or
+		- kubectl apply -k k8s/
+
+	- however, when the number of directories and configs get more, we can add a seperate kustomization.yaml 
+	  in each directory along with another kustomization.yaml file on root directory:
+		k8s/
+			kustomization.yaml
+			api/
+				kustomization.yaml
+				api-depl.yaml
+				api-service.yaml
+			db/
+				kustomization.yaml
+				db-depl.yaml
+				db-service.yaml
+			cache/
+				kustomization.yaml
+				cache-depl.yaml
+				cache-service.yaml
+			kafka/
+				kustomization.yaml
+				kafka-depl.yaml
+				kafka-service.yaml
+		- then the kustomization.yaml in one of the subdirectories looks like this:
+				- k8s/db/kustomization.yaml
+					resources:
+					  - db-depl.yaml
+					  - db-service.yaml
+		- and the kustomization.yaml in root directory looks like this:
+				- k8s/kustomization.yaml
+					resources:
+					  - api/
+					  - db/
+                      - cache/
+                      - kafka/
+		- To run these configs, again:
+			- kustomize build k8s/ | kubectl apply -f -
+			or
+			- kubectl apply -k k8s/
+		- this way we can keep the kustomization.yaml in root directory as clean as possible
 
 
 ============================================================================================ KUBERNETES In Action Book - Marko Luksa ======================================================================================================
