@@ -2160,7 +2160,60 @@ k8s/
             newTag: 2.4
 
 
+- Patches Intro
+	- Kustomize patches provide another method to modifying kubernetes configs
+	- Unlike common transformers, patches provide a more "surgical" approach to targeting one or more specific sections in a Kubernetes resource
+	- To create a patch, 3 parameters must be provided:
+		- Operation Type: add/remove/replace
+		- Target: What resources should this patch be applied on
+			- Kind
+			- Version/Group
+			- Name
+			- Namespace
+			- LabelSelector
+			- AnnotationSelector
+		- Value: What is the value that will either be replaced or added with (only needed for add/replace operations)
 
+	- There are two formats of patches in kustomization.yaml
+		- Json 6902 Patch
+		- Strategic merge patch
+
+	- example of a patch in kustomization.yaml(Json 6902 Patch):
+
+		patches:
+		  - target:
+		      kind: Deployment
+			  name: api-deployment
+		
+		  -patch: |-
+		     - op: replace
+			   path: /metadata/name
+		       value: web-deployment
+
+
+	- another example of a patch in kustomization.yaml(Json 6902 Patch):
+		patches:
+		  - target:
+		      kind: Deployment
+			  name: api-deployment
+		
+		  -patch: |-
+		     - op: replace
+			   path: /spec/replicas
+		       value: 5
+
+	- another example of a patch in kustomization.yaml(Strategic merge Patch):
+		patches:
+		  -patch: |-
+		     apiVersion: apps/v1
+			 kind: Deployment
+		     metadata:
+               name: api-deployment
+             spec:
+               replicas: 5
+
+
+- Different Types of Patches
 
 
 ============================================================================================ KUBERNETES In Action Book - Marko Luksa ======================================================================================================
