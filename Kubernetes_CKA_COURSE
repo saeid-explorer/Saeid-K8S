@@ -2118,6 +2118,48 @@ k8s/
 		- this way we can keep the kustomization.yaml in root directory as clean as possible
 
 
+- Common Transformers in Kustomize
+	- Common transformers are used to apply some common configuration on all kubernetes configs
+	- here are some common transformations that we can apply
+		- commonLabel - adds a label to all kubernetes resources
+		- namePrefix/Suffix - adds a common prefix-suffix to all resource names
+		- Namespace - adds a common namespace to all resources
+		- commonAnnotations - adds an annotation to all resources
+
+	- to add a "common label" to all the kubernetes resources, here is what we enter into kustomization.yaml file(e.g.):
+		commonLabels:
+	      org: KodeKloud
+
+	- to add a "namespace" to all the kubernetes resources, here is what we enter into kustomization.yaml file(e.g.):
+		namespace: lab
+
+	- to add a "Name Prefix/suffix" to all the kubernetes resources, here is what we enter into kustomization.yaml file:
+		namePrefix: KodeKloud-
+		nameSuffix: -dev
+
+		result of it on the config file(e.g.):
+			metadata:
+				name: KodeKloud-api-service-dev
+
+	- to add a common "annotations" to all the kubernetes resources, here is what we enter into kustomization.yaml file:
+		commonAnnotations:
+		  branch: master
+
+- Image Transformers in Kustomize
+	- It allows us to modify an "Image" that specific Deployments or containers use
+	- example of using it in kustomization.yaml file:
+
+		images:
+		  - name: nginx
+            newName: haproxy 
+
+	- we can also change the tag of  an image. example kustomization.yaml file:
+
+		images:
+          - name: nginx
+            newTag: 2.4
+
+
 
 
 
@@ -2158,5 +2200,4 @@ spec:
 				- Replica Count
 				- POD Template
 
-- Common Transformers
 
