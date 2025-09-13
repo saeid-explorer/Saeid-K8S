@@ -2225,6 +2225,46 @@ k8s/
 
 
 	
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ Troubleshooting ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+- Check Service Status
+	- Application Failure
+		- Check Service
+			- curl http://web-service-ip:node-port
+			- kubectl describe service web-service
+		- Check POD
+			- kubectl get pod
+			- kubectl describe pod web
+			- kubectl logs web -f --previous
+		- check dependent service
+		- check dependent Applications
+
+	- Control Plane Failure
+		- Check Node Status
+			- kubectl get nodes
+			- kubectl get pods
+		- Check Controlplane Pods
+			- kubectl get pods -n kube-system
+		- Check Controlplane Services
+			- service kube-apiserver status
+			- service kube-controller-manager status
+			- service kube-scheduler status
+			- service kubelet status
+			- service kube-proxy status
+		- Check Service Logs
+			- kubectl logs kube-apiserver-master -n kube-system
+			- sudo journalctl -u kube-apiserver
+
+	- Worker Node Failure
+		- Check Node Status
+			- kubectl describe node worker-1
+		- Check Node
+			- top
+			- df -h
+		- Check Kubelet Status
+			- service kubelet status
+			- sudo journalctl -u kubelet
+			- openssl x509 -in /var/lib/kubelet/worker-1.crt -text
 
 
 ============================================================================================ KUBERNETES In Action Book - Marko Luksa ======================================================================================================
