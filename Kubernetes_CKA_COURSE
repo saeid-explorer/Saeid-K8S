@@ -2213,7 +2213,18 @@ k8s/
                replicas: 5
 
 
-- Different Types of Patches
+- Components
+	- Components provide the ability to define reusable pieces of configuration logic(resources + patches) that can be included in multiple overlays
+	- Components are useful in situations where applications support multiple optional features that need to be enabled only in a subset of overlays
+	- in order to import components on kustomization.yaml
+
+		bases:
+		  - ../../base
+        components:
+          - ../../components/db
+
+
+	
 
 
 ============================================================================================ KUBERNETES In Action Book - Marko Luksa ======================================================================================================
