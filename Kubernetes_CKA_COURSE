@@ -2304,4 +2304,36 @@ spec:
 				- Replica Count
 				- POD Template
 
+** Chapter 3 - Deploying your first application
+
+	* Exposing your application to the world
+		- Creating a Deployment
+			- e.g.:  sudo kubectl create deployment nginx --image=nginx --replicas=3
+
+		- Exposing your application to the world(using Services)
+			- e.g.: sudo kubectl expose deployment nginx \
+					  --type=LoadBalancer \
+					  --port=8080 \
+					  --target-port=80 \
+					  --name=nginx-service
+
+		- Listing Services
+			- Kubectl get svc
+
+		- Accessing your Application(service)
+			- curl [worker node IP]:8080
+
+		- Changing service type from LoadBalancer to NodePort
+			-  sudo kubectl patch svc nginx-service -p '{"spec": {"type": "LoadBalancer", "ports":[{"port":8080,"targetPort":80}]}}'
+
+
+	* Horizontally scaling the application(Scaling Out)
+		- This is done by Increasing the number of running application instances
+		- kubectl scale deployment nginx --replicas=5
+
+
+** Introducing Kubernetes API objects
+
+
+
 
