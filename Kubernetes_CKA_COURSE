@@ -2332,7 +2332,7 @@ spec:
 		- kubectl scale deployment nginx --replicas=5
 
 
-** Introducing Kubernetes API objects
+** Chapter 4 - Introducing Kubernetes API objects
 
 
 
