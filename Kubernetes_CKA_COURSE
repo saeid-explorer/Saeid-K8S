@@ -2353,4 +2353,28 @@ spec:
 				- Status
 					- actual current state of the resource
 
+		- Explore API object fields
+			- kubectl explain <kind>
+			- a nice feature that allows you to look up the explanation of each field for each object type (kind)
+			  from the command line
+			- e.g.: kubectl explain nodes
+			- The command prints the explanation of the object and lists the top-level fields that the object can contain
+
+			- Drilling deeper into an API object’s structure
+				- e.g.: kubectl explain node.spec
+
+			- to see the complete structure of an object
+				- e.g.: kubectl explain pods --recursive
+
+		- An object’s status conditions
+			- It gives a list of conditions the object is currently in
+			- very useful when you need to troubleshoot an object
+			- for example, to display the node’s status conditions:
+				- kubectl get node <name> -o json | jq .status.conditions
+
+		- Inspecting objects
+			- kubectl describe <kind>
+			- e.g.: kubectl describe node master
+			
+
 
