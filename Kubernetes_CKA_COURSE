@@ -2375,6 +2375,16 @@ spec:
 		- Inspecting objects
 			- kubectl describe <kind>
 			- e.g.: kubectl describe node master
+
+		- Event Object
+			- events are represented by Event objects that are created and read via the Kubernetes API
+			- they contain information about what happened to the object and what the source of the event was
+			- each Event object is deleted one hour after its creation to reduce the burden on etcd
+			- Listing events
+				- kubectl get ev
 			
 
+
+===================================================
+** Chapter 5 - Running workloads in Pods
 
