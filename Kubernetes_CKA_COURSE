@@ -2304,6 +2304,7 @@ spec:
 				- Replica Count
 				- POD Template
 
+====================================================
 ** Chapter 3 - Deploying your first application
 
 	* Exposing your application to the world
@@ -2331,9 +2332,25 @@ spec:
 		- This is done by Increasing the number of running application instances
 		- kubectl scale deployment nginx --replicas=5
 
-
+===================================================
 ** Chapter 4 - Introducing Kubernetes API objects
 
-
+	* Kubernetes API
+		- In a Kubernetes cluster, both users and Kubernetes components interact with the cluster by manipulating objects through the Kubernetes API
+		- an HTTP-based RESTful API
+		- the state is represented by resources on which you perform CRUD operations
+		- The essential concept in RESTful APIs is the resource
+		- each resource is assigned a URI or Uniform Resource Identifier that uniquely identifies it
+		- Object
+			- also referred to objects(not essentially the same)
+		 	- Main Parts of an object
+				- Type Metadata
+					- Type of the resource
+				- Object Metadata 
+					- the name and other identifying information
+				- Spec
+					- the state you want the resource to be
+				- Status
+					- actual current state of the resource
 
 
