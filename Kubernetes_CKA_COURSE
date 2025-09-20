@@ -2421,7 +2421,7 @@ spec:
 
 
 ===================================================
-** Chapter 6 - Manging the Pod lifecycle
+** Chapter 6 - Managing the Pod lifecycle
 
 	* Keeping Containers Healthy
 		- Configuring the pod’s restart policy
@@ -2485,3 +2485,38 @@ containers:
       port: http
     periodSeconds: 10
     failureThreshold: 12
+
+
+
+	* Executing actions at container start-up and shutdown
+		- You may also want to run additional processes every time a container starts and just before it stops by adding lifecycle hooks
+			- Post-start hooks, which are executed when the container starts
+			- Pre-stop hooks, which are executed shortly before the container stops
+		- lifecycle hooks are specified per container
+		- lifecycle hooks can be used to
+			- execute a command inside the container
+			- send an HTTP GET request to the application in the container
+		- Pod with a post-start lifecycle hook
+
+apiVersion: v1
+kind: Pod
+metadata:
+  name: quote-poststart #A
+spec:
+  containers:
+  - name: nginx 
+    image: nginx:alpine 
+    ports: 
+    - name: http 
+      containerPort: 80
+    lifecycle: 
+      postStart: 
+        exec: 
+          command: 
+          - sh #E
+          - -c #F
+          - | #G
+            apk add fortune && \ 
+            curl -O https://luksa.github.io/kiada/book-quotes.txt && \
+            curl -O https://luksa.github.io/kiada/book-quotes.txt.dat && \ 
+            fortune book-quotes.txt > /usr/share/nginx/html/quote
