@@ -2417,3 +2417,71 @@ spec:
 			- Delay the start of the pod’s main containers until a precondition is met
 			- Notify an external service that the pod is about to start running
 		- In a pod manifest, init containers are defined in the initContainers field in the spec section
+
+
+
+===================================================
+** Chapter 6 - Manging the Pod lifecycle
+
+	* Keeping Containers Healthy
+		- Configuring the pod’s restart policy
+			- Three restart policies exist
+				1) restartPolicy: Always  (default)
+				2) restartPolicy: OnFailure
+				3) restartPolicy: Never
+
+		- Liveness Probes
+			- Types of liveness probes
+				1) An HTTP Get probe
+				2) A TCP Socket prbe
+				3) An Exec probe
+			- Sample http liveness Probe in Pod Definition YAML file
+
+apiVersion: v1
+kind: Pod
+metadata:
+  name: kiada-liveness
+spec:
+  containers:
+  - name: kiada
+    image: luksa/kiada:0.1
+    ports:
+    - name: http
+      containerPort: 8080
+    livenessProbe:
+      httpGet:
+        path: /
+        port: 8080
+
+
+			- Sample exec liveness Probe in Pod Definition YAML file
+
+livenessProbe:
+exec:
+command: 
+- /usr/bin/healthcheck 
+periodSeconds: 2 
+timeoutSeconds: 1 
+failureThreshold: 1 
+
+
+
+		- Startup Probes
+			- If a startup probe is defined for a container, only the startup probe is executed when the container is started
+			- The startup probe can be configured to consider the slow start of the 
+			  application
+            - When the startup probe succeeds, Kubernetes switches to using the liveness probe
+			- Sample http Startup Probe in Pod Definition YAML file
+
+containers:
+- name: kiada
+  image: luksa/kiada:0.1
+  ports:
+  - name: http
+    containerPort: 8080
+  startupProbe:
+    httpGet:
+      path: /
+      port: http
+    periodSeconds: 10
+    failureThreshold: 12
