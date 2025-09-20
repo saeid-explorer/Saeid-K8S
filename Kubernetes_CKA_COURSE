@@ -2388,3 +2388,32 @@ spec:
 ===================================================
 ** Chapter 5 - Running workloads in Pods
 
+	* Retrieving a pod’s log
+		- e.g. kubectl logs nginx
+
+	* Streaming pod's logs
+		- e.g. kubectl logs nginx -f
+
+	* Displaying the timestamp of each logged line
+		- e.g. kubectl logs nginx --timestamps=true
+
+	* Displaying recent logs
+		- e.g. kubectl logs nginx --since=2m
+		- e.g. kubectl logs nginx --since-time=2020-02-01T09:50:00Z
+
+	* Displaying the last several lines of the log
+		- e.g. kubectl logs nginx --tail=10
+
+	* Location of pod's logs
+		- Kubernetes keeps a separate log file for each container
+		- They are usually stored in /var/log/containers on the node that runs the container
+
+	* Running additional containers at pod startup
+		- these containers are called Init Containers
+		- These containers are intended to initialize the pod
+		- what init containers can do
+			- Initialize files in the volumes used by the pod’s main containers
+			- Initialize the pod’s networking system
+			- Delay the start of the pod’s main containers until a precondition is met
+			- Notify an external service that the pod is about to start running
+		- In a pod manifest, init containers are defined in the initContainers field in the spec section
